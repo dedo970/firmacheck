@@ -26,18 +26,18 @@ export function HeroIllustration() {
         priority
         className="opacity-90 dark:opacity-70"
       />
-      <div className="w-full flex flex-col gap-px border border-[var(--border)] rounded-xl overflow-hidden">
+      <div className="flex w-full flex-col gap-px overflow-hidden rounded-xl border border-[var(--border)]">
         {FEATURES.map((f, i) => (
           <div
             key={i}
-            className="flex items-start gap-4 px-4 py-3.5 bg-[var(--background)] hover:bg-[var(--surface)] transition-colors"
+            className="flex items-start gap-4 bg-[var(--background)] px-4 py-3.5 transition-colors hover:bg-[var(--surface)]"
           >
-            <div className="mt-0.5 h-5 w-5 rounded-md border border-[var(--border)] flex items-center justify-center shrink-0">
+            <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-[var(--border)]">
               <div className="h-1.5 w-1.5 rounded-full bg-[var(--muted)]/50" />
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-medium leading-snug">{f.label}</p>
-              <p className="text-xs text-[var(--muted)] mt-0.5">{f.detail}</p>
+              <p className="text-sm leading-snug font-medium">{f.label}</p>
+              <p className="mt-0.5 text-xs text-[var(--muted)]">{f.detail}</p>
             </div>
           </div>
         ))}

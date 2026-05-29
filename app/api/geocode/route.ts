@@ -5,11 +5,17 @@ const NOMINATIM = 'https://nominatim.openstreetmap.org/search';
 const TIMEOUT_MS = 8000;
 const MAX_ADDRESS_LENGTH = 500;
 const NO_STORE = { headers: { 'Cache-Control': 'no-store' } };
+const NOMINATIM_CONTACT = process.env.NOMINATIM_CONTACT ?? '';
 
 export async function GET(request: NextRequest) {
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
-  if (!checkRateLimit(ip, 20)) {
-    return NextResponse.json({ error: 'Příliš mnoho požadavků. Zkuste to za chvíli.' }, { status: 429 });
+  // x-real-ip is set by Vercel's edge and cannot be spoofed.
+  // Fallback to 'unknown' (not x-forwarded-for, which is client-controlled).
+  const ip = request.headers.get('x-real-ip') ?? 'unknown';
+  if (!checkRateLimit(`${ip}:geo`, 20)) {
+    return NextResponse.json(
+      { error: 'Příliš mnoho požadavků. Zkuste to za chvíli.' },
+      { status: 429 },
+    );
   }
 
   const address = request.nextUrl.searchParams.get('address');
@@ -29,7 +35,7 @@ export async function GET(request: NextRequest) {
 
     const res = await fetch(url.toString(), {
       headers: {
-        'User-Agent': 'FirmaCheck/1.0 (github.com/firmacheck)',
+        'User-Agent': `FirmaCheck/1.0${NOMINATIM_CONTACT ? ` (contact: ${NOMINATIM_CONTACT})` : ''}`,
         'Accept-Language': 'cs',
       },
       signal: controller.signal,
@@ -45,8 +51,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Adresa nenalezena' }, { status: 404 });
     }
 
-    const { lat, lon } = results[0];
-    return NextResponse.json({ lat: parseFloat(lat), lng: parseFloat(lon) }, NO_STORE);
+    const lat = parseFloat(results[0].lat);
+    const lng = parseFloat(results[0].lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+      return NextResponse.json({ error: 'Geocoding vrátil neplatné souřadnice' }, { status: 502 });
+    }
+    return NextResponse.json({ lat, lng }, NO_STORE);
   } catch (err) {
     if (err instanceof Error && err.name === 'AbortError') {
       return NextResponse.json({ error: 'Geocoding neodpověděl včas' }, { status: 504 });

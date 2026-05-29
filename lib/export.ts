@@ -1,8 +1,16 @@
 import type { SavedCompany } from '@/types';
 
 const CSV_HEADERS = [
-  'ico', 'nazev', 'pravni_forma', 'stav', 'adresa',
-  'datum_vzniku', 'datum_overeni', 'zdroj', 'lat', 'lng',
+  'ico',
+  'nazev',
+  'pravni_forma',
+  'stav',
+  'adresa',
+  'datum_vzniku',
+  'datum_overeni',
+  'zdroj',
+  'lat',
+  'lng',
 ];
 
 const FORMULA_PREFIXES = /^[=+\-@\t\r]/;
@@ -35,10 +43,11 @@ export function toCSV(companies: SavedCompany[]): string {
       c.lng ?? '',
     ]
       .map(escapeCSV)
-      .join(',')
+      .join(','),
   );
 
-  return [header, ...rows].join('\n');
+  // BOM for correct Czech character display in Excel; CRLF per RFC 4180
+  return '﻿' + [header, ...rows].join('\r\n');
 }
 
 export function toJSON(companies: SavedCompany[]): string {
@@ -51,6 +60,11 @@ export function downloadFile(content: string, filename: string, mimeType: string
   const a = document.createElement('a');
   a.href = url;
   a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
+  try {
+    document.body.appendChild(a);
+    a.click();
+  } finally {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 }

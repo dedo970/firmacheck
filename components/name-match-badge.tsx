@@ -35,7 +35,9 @@ export function NameMatchBadge({ result, input, aresName }: NameMatchBadgeProps)
 
   return (
     <div className="flex flex-col gap-1">
-      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium w-fit ${className}`}>
+      <span
+        className={`inline-flex w-fit items-center gap-1 rounded px-2 py-0.5 text-xs font-medium ${className}`}
+      >
         {icon} {label}
       </span>
       <p className="text-xs text-[var(--muted)]">{message}</p>

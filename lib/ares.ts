@@ -10,6 +10,8 @@ type RawSidlo = {
   [key: string]: unknown;
 };
 
+type AresRawResponse = Record<string, unknown>;
+
 export function extractAddress(sidlo: RawSidlo): string {
   if (sidlo.textovaAdresa) return sidlo.textovaAdresa;
 
@@ -28,29 +30,24 @@ export function extractAddress(sidlo: RawSidlo): string {
   return parts.join(', ');
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function parseAresResponse(raw: any): AresCompany {
-  const pravniForma =
-    typeof raw.pravniForma === 'object' && raw.pravniForma?.nazev
-      ? raw.pravniForma.nazev
-      : String(raw.pravniForma ?? '');
+function extractStringField(raw: AresRawResponse, key: string): string {
+  const value = raw[key];
+  if (typeof value === 'object' && value !== null && 'nazev' in value) {
+    return String((value as Record<string, unknown>).nazev);
+  }
+  return String(value ?? '');
+}
 
-  const stavSubjektu =
-    typeof raw.stavSubjektu === 'object' && raw.stavSubjektu?.nazev
-      ? raw.stavSubjektu.nazev
-      : String(raw.stavSubjektu ?? '');
-
-  const datumVzniku = raw.datumVzniku
-    ? String(raw.datumVzniku).split('T')[0]
-    : '';
+export function parseAresResponse(raw: AresRawResponse): AresCompany {
+  const datumVzniku = raw.datumVzniku ? String(raw.datumVzniku).split('T')[0] : '';
 
   return {
     ico: String(raw.ico ?? ''),
     obchodniJmeno: String(raw.obchodniJmeno ?? ''),
-    pravniForma,
-    stavSubjektu,
+    pravniForma: extractStringField(raw, 'pravniForma'),
+    stavSubjektu: extractStringField(raw, 'stavSubjektu'),
     datumVzniku,
-    adresa: raw.sidlo ? extractAddress(raw.sidlo) : '',
+    adresa: raw.sidlo ? extractAddress(raw.sidlo as RawSidlo) : '',
     dic: raw.dic ? String(raw.dic) : undefined,
   };
 }

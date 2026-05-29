@@ -1,15 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateIco, normalizeIco } from '@/lib/validate-ico';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { parseAresResponse } from '@/lib/ares';
 
 const ARES_BASE = 'https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty';
 const TIMEOUT_MS = 8000;
 const NO_STORE = { headers: { 'Cache-Control': 'no-store' } };
 
 export async function GET(request: NextRequest) {
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
-  if (!checkRateLimit(ip)) {
-    return NextResponse.json({ error: 'Příliš mnoho požadavků. Zkuste to za chvíli.' }, { status: 429 });
+  // x-real-ip is set by Vercel's edge and cannot be spoofed.
+  // Fallback to 'unknown' (not x-forwarded-for, which is client-controlled).
+  const ip = request.headers.get('x-real-ip') ?? 'unknown';
+  if (!checkRateLimit(`${ip}:ares`)) {
+    return NextResponse.json(
+      { error: 'Příliš mnoho požadavků. Zkuste to za chvíli.' },
+      { status: 429 },
+    );
   }
 
   const ico = request.nextUrl.searchParams.get('ico');
@@ -19,7 +25,10 @@ export async function GET(request: NextRequest) {
 
   const paddedIco = normalizeIco(ico);
   if (!validateIco(paddedIco)) {
-    return NextResponse.json({ error: 'Neplatné IČO (nesprávný kontrolní součet)' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Neplatné IČO (nesprávný kontrolní součet)' },
+      { status: 400 },
+    );
   }
 
   const controller = new AbortController();
@@ -39,8 +48,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Chyba ARES API' }, { status: 502 });
     }
 
-    const data = await res.json();
-    return NextResponse.json(data, NO_STORE);
+    const raw = await res.json();
+    return NextResponse.json(parseAresResponse(raw), NO_STORE);
   } catch (err) {
     if (err instanceof Error && err.name === 'AbortError') {
       return NextResponse.json({ error: 'ARES API neodpovědělo včas' }, { status: 504 });

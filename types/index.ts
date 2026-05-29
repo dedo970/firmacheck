@@ -1,5 +1,3 @@
-// types/index.ts
-
 export interface AresCompany {
   ico: string;
   obchodniJmeno: string;
@@ -24,14 +22,7 @@ export interface CompanyResult {
   geoSource?: DataSource;
 }
 
-export interface SavedCompany {
-  ico: string;
-  obchodniJmeno: string;
-  pravniForma: string;
-  stavSubjektu: string;
-  adresa: string;
-  datumVzniku: string;
-  dic?: string;
+export interface SavedCompany extends AresCompany {
   lat?: number;
   lng?: number;
   savedAt: number;
