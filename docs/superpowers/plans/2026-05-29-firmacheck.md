@@ -54,6 +54,7 @@ vitest.config.ts
 ## Task 1: Project Bootstrap
 
 **Files:**
+
 - Create: `package.json`, `next.config.ts`, `tsconfig.json`, `vitest.config.ts`, `app/globals.css`
 
 - [ ] **Step 1: Scaffold Next.js project**
@@ -87,11 +88,13 @@ npx shadcn@latest add button input card badge separator
 - [ ] **Step 4: Add postinstall script and copy WASM**
 
 In `package.json`, inside `"scripts"`:
+
 ```json
 "postinstall": "cp node_modules/sql.js/dist/sql-wasm.wasm public/sql-wasm.wasm",
 ```
 
 Then run immediately:
+
 ```bash
 cp node_modules/sql.js/dist/sql-wasm.wasm public/sql-wasm.wasm
 ```
@@ -135,6 +138,7 @@ export default defineConfig({
 - [ ] **Step 7: Add test script to package.json**
 
 In `"scripts"`:
+
 ```json
 "test": "vitest run",
 "test:watch": "vitest",
@@ -143,8 +147,9 @@ In `"scripts"`:
 - [ ] **Step 8: Set up Linear-style globals**
 
 Replace `app/globals.css` content:
+
 ```css
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --background: #ffffff;
@@ -173,11 +178,17 @@ Replace `app/globals.css` content:
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 ```
 
 - [ ] **Step 9: Update app/layout.tsx**
@@ -224,6 +235,7 @@ git commit -m "feat: bootstrap Next.js 15 project with Tailwind, shadcn, sql.js,
 ## Task 2: TypeScript Types
 
 **Files:**
+
 - Create: `types/index.ts`
 
 - [ ] **Step 1: Create types file**
@@ -285,6 +297,7 @@ git commit -m "feat: add shared TypeScript types"
 ## Task 3: IČO Validation
 
 **Files:**
+
 - Create: `lib/validate-ico.ts`
 - Create: `lib/validate-ico.test.ts`
 
@@ -381,6 +394,7 @@ git commit -m "feat: add IČO validation with checksum (tests green)"
 ## Task 4: Name Match Logic
 
 **Files:**
+
 - Create: `lib/name-match.ts`
 - Create: `lib/name-match.test.ts`
 
@@ -474,6 +488,7 @@ git commit -m "feat: add name match logic with diacritics normalization (tests g
 ## Task 5: ARES Data Helpers
 
 **Files:**
+
 - Create: `lib/ares.ts`
 - Create: `lib/ares.test.ts`
 
@@ -587,9 +602,7 @@ export function parseAresResponse(raw: any): AresCompany {
       ? raw.stavSubjektu.nazev
       : String(raw.stavSubjektu ?? '');
 
-  const datumVzniku = raw.datumVzniku
-    ? String(raw.datumVzniku).split('T')[0]
-    : '';
+  const datumVzniku = raw.datumVzniku ? String(raw.datumVzniku).split('T')[0] : '';
 
   return {
     ico: String(raw.ico ?? ''),
@@ -623,6 +636,7 @@ git commit -m "feat: add ARES response parser with address extraction (tests gre
 ## Task 6: CSV/JSON Export
 
 **Files:**
+
 - Create: `lib/export.ts`
 - Create: `lib/export.test.ts`
 
@@ -695,8 +709,16 @@ Expected: FAIL.
 import type { SavedCompany } from '@/types';
 
 const CSV_HEADERS = [
-  'ico', 'nazev', 'pravni_forma', 'stav', 'adresa',
-  'datum_vzniku', 'datum_overeni', 'zdroj', 'lat', 'lng',
+  'ico',
+  'nazev',
+  'pravni_forma',
+  'stav',
+  'adresa',
+  'datum_vzniku',
+  'datum_overeni',
+  'zdroj',
+  'lat',
+  'lng',
 ];
 
 function escapeCSV(value: string | number | undefined): string {
@@ -725,7 +747,7 @@ export function toCSV(companies: SavedCompany[]): string {
       c.lng ?? '',
     ]
       .map(escapeCSV)
-      .join(',')
+      .join(','),
   );
 
   return [header, ...rows].join('\n');
@@ -766,6 +788,7 @@ git commit -m "feat: add CSV/JSON export helpers (tests green)"
 ## Task 7: ARES API Route
 
 **Files:**
+
 - Create: `app/api/ares/route.ts`
 
 - [ ] **Step 1: Create the route**
@@ -808,6 +831,7 @@ export async function GET(request: NextRequest) {
 - [ ] **Step 2: Manually verify against real ARES API**
 
 In a browser or curl:
+
 ```bash
 curl "http://localhost:3000/api/ares?ico=02823519"
 ```
@@ -826,6 +850,7 @@ git commit -m "feat: add ARES API proxy route"
 ## Task 8: Geocoding API Route
 
 **Files:**
+
 - Create: `app/api/geocode/route.ts`
 
 - [ ] **Step 1: Create the route**
@@ -894,6 +919,7 @@ git commit -m "feat: add Nominatim geocoding proxy route"
 ## Task 9: SQLite Provider
 
 **Files:**
+
 - Create: `lib/sqlite-provider.tsx`
 
 - [ ] **Step 1: Create provider**
@@ -958,7 +984,9 @@ export function SQLiteProvider({ children }: { children: React.ReactNode }) {
       const SQL = await initSqlJs({ locateFile: () => '/sql-wasm.wasm' });
 
       const idb = await openDB(IDB_DB_NAME, 1, {
-        upgrade(d) { d.createObjectStore(IDB_STORE); },
+        upgrade(d) {
+          d.createObjectStore(IDB_STORE);
+        },
       });
       idbRef.current = idb;
 
@@ -990,7 +1018,7 @@ export function SQLiteProvider({ children }: { children: React.ReactNode }) {
     if (!dbRef.current) return;
     dbRef.current.run(
       'INSERT OR REPLACE INTO ares_cache (ico, data, source, created_at) VALUES (?, ?, ?, ?)',
-      [ico, JSON.stringify(company), 'api', Date.now()]
+      [ico, JSON.stringify(company), 'api', Date.now()],
     );
     persist();
   }
@@ -1008,7 +1036,7 @@ export function SQLiteProvider({ children }: { children: React.ReactNode }) {
     if (!dbRef.current) return;
     dbRef.current.run(
       'INSERT OR REPLACE INTO geocode_cache (address, lat, lng, created_at) VALUES (?, ?, ?, ?)',
-      [address, geo.lat, geo.lng, Date.now()]
+      [address, geo.lat, geo.lng, Date.now()],
     );
     persist();
   }
@@ -1016,7 +1044,7 @@ export function SQLiteProvider({ children }: { children: React.ReactNode }) {
   function getSavedCompanies(): SavedCompany[] {
     if (!dbRef.current) return [];
     const stmt = dbRef.current.prepare(
-      'SELECT data, saved_at, last_verified_at, source FROM saved_companies ORDER BY saved_at DESC'
+      'SELECT data, saved_at, last_verified_at, source FROM saved_companies ORDER BY saved_at DESC',
     );
     const rows: SavedCompany[] = [];
     while (stmt.step()) {
@@ -1039,7 +1067,7 @@ export function SQLiteProvider({ children }: { children: React.ReactNode }) {
     const now = Date.now();
     dbRef.current.run(
       'INSERT OR REPLACE INTO saved_companies (ico, data, saved_at, last_verified_at, source) VALUES (?, ?, ?, ?, ?)',
-      [company.ico, data, now, now, source]
+      [company.ico, data, now, now, source],
     );
     persist();
   }
@@ -1059,12 +1087,19 @@ export function SQLiteProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <SQLiteContext.Provider value={{
-      ready,
-      getAresCache, setAresCache,
-      getGeocodeCache, setGeocodeCache,
-      getSavedCompanies, saveCompany, removeCompany, isCompanySaved,
-    }}>
+    <SQLiteContext.Provider
+      value={{
+        ready,
+        getAresCache,
+        setAresCache,
+        getGeocodeCache,
+        setGeocodeCache,
+        getSavedCompanies,
+        saveCompany,
+        removeCompany,
+        isCompanySaved,
+      }}
+    >
       {children}
     </SQLiteContext.Provider>
   );
@@ -1089,12 +1124,14 @@ git commit -m "feat: add browser-side sql.js SQLite provider with IndexedDB pers
 ## Task 10: Hero SVG Illustration
 
 **Files:**
+
 - Create: `public/hero.svg`
 - Create: `components/hero-illustration.tsx`
 
 - [ ] **Step 1: Create AI-generated hero SVG**
 
 Save to `public/hero.svg`:
+
 ```svg
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
   <!-- Background subtle grid -->
@@ -1169,13 +1206,7 @@ import Image from 'next/image';
 export function HeroIllustration() {
   return (
     <div className="flex flex-col items-center gap-4 py-8">
-      <Image
-        src="/hero.svg"
-        alt="Ilustrace ověřování firmy"
-        width={280}
-        height={210}
-        priority
-      />
+      <Image src="/hero.svg" alt="Ilustrace ověřování firmy" width={280} height={210} priority />
       <div className="text-center">
         <p className="text-sm text-[var(--muted)]">
           Zadejte IČO a ověřte firmu v českém rejstříku ARES
@@ -1198,6 +1229,7 @@ git commit -m "feat: add AI-generated hero SVG illustration"
 ## Task 11: UI Badges & Source Indicator
 
 **Files:**
+
 - Create: `components/source-badge.tsx`
 - Create: `components/name-match-badge.tsx`
 
@@ -1218,7 +1250,7 @@ export function SourceBadge({ label, source }: SourceBadgeProps) {
     <span className="inline-flex items-center gap-1.5 text-xs text-[var(--muted)]">
       {label}:
       <span
-        className={`inline-flex items-center px-1.5 py-0.5 rounded font-mono font-medium text-xs ${
+        className={`inline-flex items-center rounded px-1.5 py-0.5 font-mono text-xs font-medium ${
           isCache
             ? 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
             : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
@@ -1272,7 +1304,9 @@ export function NameMatchBadge({ result, input, aresName }: NameMatchBadgeProps)
 
   return (
     <div className="flex flex-col gap-1">
-      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium w-fit ${className}`}>
+      <span
+        className={`inline-flex w-fit items-center gap-1 rounded px-2 py-0.5 text-xs font-medium ${className}`}
+      >
         {icon} {label}
       </span>
       <p className="text-xs text-[var(--muted)]">{message}</p>
@@ -1293,6 +1327,7 @@ git commit -m "feat: add SourceBadge and NameMatchBadge UI components"
 ## Task 12: Search Form
 
 **Files:**
+
 - Create: `components/search-form.tsx`
 
 - [ ] **Step 1: Create search-form.tsx**
@@ -1329,14 +1364,17 @@ export function SearchForm({ onSearch, loading }: SearchFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-      <div className="flex flex-col sm:flex-row gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row">
         <div className="flex-1">
           <Input
             type="text"
             inputMode="numeric"
             placeholder="IČO firmy *"
             value={ico}
-            onChange={(e) => { setIco(e.target.value); setError(''); }}
+            onChange={(e) => {
+              setIco(e.target.value);
+              setError('');
+            }}
             maxLength={8}
             className="font-mono"
             aria-label="IČO firmy"
@@ -1351,7 +1389,11 @@ export function SearchForm({ onSearch, loading }: SearchFormProps) {
           className="flex-1"
           aria-label="Název firmy"
         />
-        <Button type="submit" disabled={loading} className="bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white sm:w-auto w-full">
+        <Button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] sm:w-auto"
+        >
           {loading ? 'Načítám…' : 'Ověřit firmu'}
         </Button>
       </div>
@@ -1372,6 +1414,7 @@ git commit -m "feat: add SearchForm component with IČO validation"
 ## Task 13: Company Detail Card
 
 **Files:**
+
 - Create: `components/company-detail.tsx`
 
 - [ ] **Step 1: Create company-detail.tsx**
@@ -1398,22 +1441,23 @@ function formatDate(isoDate: string): string {
 }
 
 const STATUS_STYLES: Record<string, string> = {
-  'Aktivní': 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  'AKTIVNI': 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  Aktivní: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  AKTIVNI: 'bg-emerald-50 text-emerald-700 border-emerald-200',
 };
 
 export function CompanyDetail({ result, nameQuery, onSave, isSaved }: CompanyDetailProps) {
   const { company, aresSource, geo, geoSource } = result;
   const nameMatch = nameQuery ? matchNames(nameQuery, company.obchodniJmeno) : null;
-  const statusStyle = STATUS_STYLES[company.stavSubjektu] ?? 'bg-gray-50 text-gray-700 border-gray-200';
+  const statusStyle =
+    STATUS_STYLES[company.stavSubjektu] ?? 'bg-gray-50 text-gray-700 border-gray-200';
 
   return (
     <Card className="border-[var(--border)]">
       <CardHeader className="pb-3">
-        <div className="flex items-start justify-between gap-2 flex-wrap">
+        <div className="flex flex-wrap items-start justify-between gap-2">
           <div>
             <CardTitle className="text-xl font-semibold">{company.obchodniJmeno}</CardTitle>
-            <p className="text-sm text-[var(--muted)] font-mono mt-0.5">IČO: {company.ico}</p>
+            <p className="mt-0.5 font-mono text-sm text-[var(--muted)]">IČO: {company.ico}</p>
           </div>
           <Badge variant="outline" className={`text-xs ${statusStyle}`}>
             ● {company.stavSubjektu}
@@ -1422,13 +1466,13 @@ export function CompanyDetail({ result, nameQuery, onSave, isSaved }: CompanyDet
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {/* Data sources */}
-        <div className="flex flex-wrap gap-3 p-3 rounded-md bg-[var(--surface)] border border-[var(--border)]">
+        <div className="flex flex-wrap gap-3 rounded-md border border-[var(--border)] bg-[var(--surface)] p-3">
           <SourceBadge label="ARES data" source={aresSource} />
           {geoSource && <SourceBadge label="Geocoding" source={geoSource} />}
         </div>
 
         {/* Company fields */}
-        <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
+        <dl className="grid grid-cols-1 gap-x-6 gap-y-3 text-sm sm:grid-cols-2">
           {[
             ['Právní forma', company.pravniForma],
             ['Datum vzniku', formatDate(company.datumVzniku)],
@@ -1436,7 +1480,7 @@ export function CompanyDetail({ result, nameQuery, onSave, isSaved }: CompanyDet
             ['DIČ', company.dic ?? '—'],
           ].map(([label, value]) => (
             <div key={label}>
-              <dt className="text-xs text-[var(--muted)] mb-0.5">{label}</dt>
+              <dt className="mb-0.5 text-xs text-[var(--muted)]">{label}</dt>
               <dd className="font-medium">{value}</dd>
             </div>
           ))}
@@ -1445,7 +1489,9 @@ export function CompanyDetail({ result, nameQuery, onSave, isSaved }: CompanyDet
         {/* Geo coordinates */}
         {geo && (
           <div className="text-xs text-[var(--muted)]">
-            <span className="font-mono">{geo.lat.toFixed(6)}°N, {geo.lng.toFixed(6)}°E</span>
+            <span className="font-mono">
+              {geo.lat.toFixed(6)}°N, {geo.lng.toFixed(6)}°E
+            </span>
             {' · '}
             <a
               href={`https://www.openstreetmap.org/?mlat=${geo.lat}&mlon=${geo.lng}&zoom=16`}
@@ -1467,9 +1513,9 @@ export function CompanyDetail({ result, nameQuery, onSave, isSaved }: CompanyDet
         <button
           onClick={onSave}
           disabled={isSaved}
-          className={`self-start text-sm px-3 py-1.5 rounded-md border transition-colors ${
+          className={`self-start rounded-md border px-3 py-1.5 text-sm transition-colors ${
             isSaved
-              ? 'border-[var(--border)] text-[var(--muted)] cursor-default'
+              ? 'cursor-default border-[var(--border)] text-[var(--muted)]'
               : 'border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white'
           }`}
         >
@@ -1493,6 +1539,7 @@ git commit -m "feat: add CompanyDetail card component"
 ## Task 14: Leaflet Map
 
 **Files:**
+
 - Create: `components/company-map.tsx`
 
 - [ ] **Step 1: Create company-map.tsx (dynamic, no SSR)**
@@ -1509,11 +1556,14 @@ interface CompanyMapProps {
   companyName: string;
 }
 
-const MapInner = dynamic(() => import('./company-map-inner'), { ssr: false, loading: () => (
-  <div className="h-64 rounded-lg bg-[var(--surface)] border border-[var(--border)] flex items-center justify-center text-sm text-[var(--muted)]">
-    Načítám mapu…
-  </div>
-)});
+const MapInner = dynamic(() => import('./company-map-inner'), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-64 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--surface)] text-sm text-[var(--muted)]">
+      Načítám mapu…
+    </div>
+  ),
+});
 
 export function CompanyMap({ geo, companyName }: CompanyMapProps) {
   return <MapInner geo={geo} companyName={companyName} />;
@@ -1542,15 +1592,20 @@ L.Icon.Default.mergeOptions({
 
 function RecenterMap({ geo }: { geo: GeoPoint }) {
   const map = useMap();
-  useEffect(() => { map.setView([geo.lat, geo.lng], 16); }, [map, geo]);
+  useEffect(() => {
+    map.setView([geo.lat, geo.lng], 16);
+  }, [map, geo]);
   return null;
 }
 
-interface Props { geo: GeoPoint; companyName: string; }
+interface Props {
+  geo: GeoPoint;
+  companyName: string;
+}
 
 export default function CompanyMapInner({ geo, companyName }: Props) {
   return (
-    <div className="h-64 rounded-lg overflow-hidden border border-[var(--border)]">
+    <div className="h-64 overflow-hidden rounded-lg border border-[var(--border)]">
       <MapContainer
         center={[geo.lat, geo.lng]}
         zoom={16}
@@ -1583,6 +1638,7 @@ git commit -m "feat: add Leaflet map component with dynamic import (no SSR)"
 ## Task 15: Saved Companies Panel
 
 **Files:**
+
 - Create: `components/saved-companies.tsx`
 
 - [ ] **Step 1: Create saved-companies.tsx**
@@ -1611,7 +1667,7 @@ export function SavedCompanies({ onSelect }: SavedCompaniesProps) {
 
   if (companies.length === 0) {
     return (
-      <div className="text-center py-8 text-sm text-[var(--muted)]">
+      <div className="py-8 text-center text-sm text-[var(--muted)]">
         Zatím nemáte uložené žádné firmy.
       </div>
     );
@@ -1632,18 +1688,18 @@ export function SavedCompanies({ onSelect }: SavedCompaniesProps) {
   return (
     <Card className="border-[var(--border)]">
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between flex-wrap gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle className="text-base font-semibold">
             Uložené firmy ({companies.length})
           </CardTitle>
-          <div className="flex gap-2 flex-wrap">
-            <Button variant="outline" size="sm" onClick={handleExportCSV} className="text-xs h-7">
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" size="sm" onClick={handleExportCSV} className="h-7 text-xs">
               Export CSV
             </Button>
-            <Button variant="outline" size="sm" onClick={handleExportJSON} className="text-xs h-7">
+            <Button variant="outline" size="sm" onClick={handleExportJSON} className="h-7 text-xs">
               Export JSON
             </Button>
-            <Button variant="outline" size="sm" onClick={handleCopyJSON} className="text-xs h-7">
+            <Button variant="outline" size="sm" onClick={handleCopyJSON} className="h-7 text-xs">
               Kopírovat JSON
             </Button>
           </div>
@@ -1652,19 +1708,22 @@ export function SavedCompanies({ onSelect }: SavedCompaniesProps) {
       <CardContent className="p-0">
         <ul className="divide-y divide-[var(--border)]">
           {companies.map((c) => (
-            <li key={c.ico} className="flex items-center justify-between px-6 py-3 hover:bg-[var(--surface)] transition-colors">
+            <li
+              key={c.ico}
+              className="flex items-center justify-between px-6 py-3 transition-colors hover:bg-[var(--surface)]"
+            >
               <button className="flex-1 text-left" onClick={() => onSelect(c.ico)}>
                 <div className="flex items-baseline gap-2">
-                  <span className="font-medium text-sm">{c.obchodniJmeno}</span>
+                  <span className="text-sm font-medium">{c.obchodniJmeno}</span>
                   <span className="font-mono text-xs text-[var(--muted)]">{c.ico}</span>
                 </div>
-                <div className="text-xs text-[var(--muted)] mt-0.5">
+                <div className="mt-0.5 text-xs text-[var(--muted)]">
                   {c.adresa} · Ověřeno {new Date(c.lastVerifiedAt).toLocaleDateString('cs-CZ')}
                 </div>
               </button>
               <button
                 onClick={() => removeCompany(c.ico)}
-                className="ml-3 text-[var(--muted)] hover:text-[var(--danger)] transition-colors text-sm"
+                className="ml-3 text-sm text-[var(--muted)] transition-colors hover:text-[var(--danger)]"
                 aria-label="Odebrat firmu"
               >
                 ✕
@@ -1690,6 +1749,7 @@ git commit -m "feat: add SavedCompanies panel with CSV/JSON export"
 ## Task 16: Main Page — Wire Everything Together
 
 **Files:**
+
 - Modify: `app/page.tsx`
 
 - [ ] **Step 1: Write app/page.tsx**
@@ -1732,8 +1792,14 @@ function FirmaCheckApp() {
 
       if (!company) {
         const res = await fetch(`/api/ares?ico=${ico}`);
-        if (res.status === 404) { setError('Firma s tímto IČO nebyla nalezena.'); return; }
-        if (!res.ok) { setError('Nepodařilo se načíst data z ARES. Zkuste to znovu.'); return; }
+        if (res.status === 404) {
+          setError('Firma s tímto IČO nebyla nalezena.');
+          return;
+        }
+        if (!res.ok) {
+          setError('Nepodařilo se načíst data z ARES. Zkuste to znovu.');
+          return;
+        }
         const raw = await res.json();
         company = parseAresResponse(raw);
         sqlite.setAresCache(ico, company);
@@ -1779,23 +1845,25 @@ function FirmaCheckApp() {
   return (
     <div className="min-h-screen bg-[var(--background)]">
       {/* Nav */}
-      <nav className="border-b border-[var(--border)] sticky top-0 z-50 bg-[var(--background)]/95 backdrop-blur">
-        <div className="max-w-2xl mx-auto px-4 h-12 flex items-center justify-between">
-          <span className="font-semibold text-sm tracking-tight">FirmaCheck</span>
+      <nav className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--background)]/95 backdrop-blur">
+        <div className="mx-auto flex h-12 max-w-2xl items-center justify-between px-4">
+          <span className="text-sm font-semibold tracking-tight">FirmaCheck</span>
           <button
             onClick={() => setShowSaved((s) => !s)}
-            className="text-sm text-[var(--muted)] hover:text-[var(--foreground)] transition-colors"
+            className="text-sm text-[var(--muted)] transition-colors hover:text-[var(--foreground)]"
           >
             Uložené firmy
           </button>
         </div>
       </nav>
 
-      <main className="max-w-2xl mx-auto px-4 py-10 flex flex-col gap-6">
+      <main className="mx-auto flex max-w-2xl flex-col gap-6 px-4 py-10">
         {/* Heading */}
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Ověření firmy</h1>
-          <p className="text-sm text-[var(--muted)] mt-1">Zadejte IČO a ověřte firmu v rejstříku ARES.</p>
+          <p className="mt-1 text-sm text-[var(--muted)]">
+            Zadejte IČO a ověřte firmu v rejstříku ARES.
+          </p>
         </div>
 
         {/* Search */}
@@ -1803,15 +1871,13 @@ function FirmaCheckApp() {
 
         {/* Error */}
         {error && (
-          <div className="p-4 rounded-lg border border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800 text-sm text-red-700 dark:text-red-400">
+          <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
             {error}
           </div>
         )}
 
         {/* Empty state */}
-        {!result && !loading && !error && !showSaved && (
-          <HeroIllustration />
-        )}
+        {!result && !loading && !error && !showSaved && <HeroIllustration />}
 
         {/* Results */}
         {result && (
@@ -1831,7 +1897,7 @@ function FirmaCheckApp() {
         {/* Saved companies panel */}
         {showSaved && (
           <div>
-            <h2 className="text-base font-semibold mb-3">Uložené firmy</h2>
+            <h2 className="mb-3 text-base font-semibold">Uložené firmy</h2>
             <SavedCompanies key={savedVersion} onSelect={handleSelectSaved} />
           </div>
         )}
@@ -1858,6 +1924,7 @@ npm run dev
 Open http://localhost:3000.
 
 Test checklist:
+
 - [ ] Type `02823519`, click "Ověřit firmu" → company detail appears with "API" badge
 - [ ] Search same IČO again → "SQLite cache" badge appears
 - [ ] Map renders with marker on Prague location
@@ -1892,6 +1959,7 @@ Expected: all tests PASS (validate-ico, name-match, ares, export).
 ## Task 18: README
 
 **Files:**
+
 - Create: `README.md`
 
 - [ ] **Step 1: Write README.md**
@@ -1920,21 +1988,21 @@ Webová aplikace pro rychlé ověření základních údajů o české firmě po
 \`\`\`bash
 git clone https://github.com/kubik/firmacheck.git
 cd firmacheck
-npm install        # automaticky zkopíruje sql-wasm.wasm do public/
-npm run dev        # http://localhost:3000
+npm install # automaticky zkopíruje sql-wasm.wasm do public/
+npm run dev # http://localhost:3000
 \`\`\`
 
 ## Technologický stack
 
-| Vrstva | Technologie |
-|---|---|
-| Framework | Next.js 15 App Router |
-| Styling | Tailwind CSS + shadcn/ui |
-| Mapa | Leaflet.js + OpenStreetMap |
-| Geocoding | Nominatim API |
-| SQLite | sql.js (WASM) + idb (IndexedDB) |
-| Testy | Vitest |
-| Deployment | Vercel |
+| Vrstva     | Technologie                     |
+| ---------- | ------------------------------- |
+| Framework  | Next.js 15 App Router           |
+| Styling    | Tailwind CSS + shadcn/ui        |
+| Mapa       | Leaflet.js + OpenStreetMap      |
+| Geocoding  | Nominatim API                   |
+| SQLite     | sql.js (WASM) + idb (IndexedDB) |
+| Testy      | Vitest                          |
+| Deployment | Vercel                          |
 
 ## API služby
 
@@ -1968,12 +2036,15 @@ Uložené firmy jsou součástí stejné SQLite DB (tabulka `saved_companies`). 
 ## Ukázky promptů
 
 **Prompt 1 — IČO validace:**
+
 > "Implement Czech IČO checksum validation. The algorithm uses weights [8,7,6,5,4,3,2] on the first 7 digits, computes sum mod 11, and derives the expected 8th digit: if remainder=0 → 1, if remainder=1 → 0, else 11-remainder."
 
 **Prompt 2 — sql.js v Next.js:**
+
 > "Set up sql.js (WASM SQLite) in a Next.js 15 App Router client component with IndexedDB persistence via the idb library. The DB should initialize from IndexedDB if a saved snapshot exists, otherwise create fresh, and persist after every write."
 
 **Prompt 3 — SVG hero ilustrace:**
+
 > "Generate an SVG illustration (400x300) for a Czech company verification app. Show an abstract document with data lines, a verification seal with a checkmark, and an 'ARES ✓' badge. Use a minimal Linear-inspired style with indigo accent (#5B5BD6) and light gray tones. No text except the badge."
 
 ## Iterace
@@ -2012,6 +2083,7 @@ gh repo create firmacheck --public --source=. --remote=origin --push
 ```
 
 Or manually via GitHub web UI, then:
+
 ```bash
 git remote add origin https://github.com/<username>/firmacheck.git
 git push -u origin main
@@ -2038,6 +2110,7 @@ git push
 - [ ] **Step 4: Verify live demo**
 
 Open the Vercel URL. Test:
+
 - [ ] Search for IČO `02823519` → company details load
 - [ ] Map renders
 - [ ] Save company → persists on reload

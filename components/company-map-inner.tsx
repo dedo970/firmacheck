@@ -28,7 +28,7 @@ interface Props {
 
 export default function CompanyMapInner({ geo, companyName }: Props) {
   return (
-    <div className="h-64 rounded-lg overflow-hidden border border-[var(--border)]">
+    <div className="h-64 overflow-hidden rounded-lg border border-[var(--border)]">
       <MapContainer
         center={[geo.lat, geo.lng]}
         zoom={16}

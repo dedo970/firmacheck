@@ -1,4 +1,5 @@
 # Praktický úkol k přihlášce
+
 ## FirmaCheck – ověření firmy podle IČO
 
 Společně s CV nám pošlete krátký praktický úkol. Cílem je ověřit, že umíte pomocí AI nástrojů vytvořit malou funkční webovou aplikaci, pracovat s GitHubem, napojit veřejné API, použít jednoduchou cache, nasadit výsledek online a stručně zdokumentovat postup.

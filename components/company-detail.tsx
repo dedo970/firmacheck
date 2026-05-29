@@ -11,45 +11,62 @@ interface CompanyDetailProps {
   onRefresh?: () => void;
 }
 
-function formatDate(isoDate: string): string {
+export function formatDate(isoDate: string): string {
   if (!isoDate) return '—';
   try {
-    return new Date(isoDate).toLocaleDateString('cs-CZ');
+    // Parse date-only strings (YYYY-MM-DD) as local time to avoid UTC midnight shifting the date
+    const [y, m, d] = isoDate.split('-').map(Number);
+    if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return isoDate;
+    return new Date(y, m - 1, d).toLocaleDateString('cs-CZ');
   } catch {
     return isoDate;
   }
 }
 
-const STATUS_DOT: Record<string, string> = {
-  'Aktivní': 'bg-emerald-500', 'AKTIVNI': 'bg-emerald-500',
-  'V likvidaci': 'bg-amber-500', 'V_LIKVIDACI': 'bg-amber-500',
-  'Zaniklý': 'bg-red-500', 'ZANIKLY': 'bg-red-500',
-  'V insolvenci': 'bg-red-500', 'V_INSOLVENCI': 'bg-red-500',
-  'Pozastavena': 'bg-gray-400', 'POZASTAVENA': 'bg-gray-400',
+type StatusConfig = { dot: string; text: string; strip: string };
+
+const STATUS_CONFIG: Record<string, StatusConfig> = {
+  AKTIVNI: {
+    dot: 'bg-emerald-500',
+    text: 'text-emerald-600 dark:text-emerald-400',
+    strip: 'bg-emerald-500',
+  },
+  V_LIKVIDACI: {
+    dot: 'bg-amber-500',
+    text: 'text-amber-600 dark:text-amber-400',
+    strip: 'bg-amber-500',
+  },
+  ZANIKLY: { dot: 'bg-red-500', text: 'text-red-600 dark:text-red-400', strip: 'bg-red-500' },
+  V_INSOLVENCI: { dot: 'bg-red-500', text: 'text-red-600 dark:text-red-400', strip: 'bg-red-500' },
+  POZASTAVENA: {
+    dot: 'bg-gray-400',
+    text: 'text-gray-500 dark:text-gray-400',
+    strip: 'bg-gray-400',
+  },
 };
 
-const STATUS_TEXT: Record<string, string> = {
-  'Aktivní': 'text-emerald-600 dark:text-emerald-400', 'AKTIVNI': 'text-emerald-600 dark:text-emerald-400',
-  'V likvidaci': 'text-amber-600 dark:text-amber-400', 'V_LIKVIDACI': 'text-amber-600 dark:text-amber-400',
-  'Zaniklý': 'text-red-600 dark:text-red-400', 'ZANIKLY': 'text-red-600 dark:text-red-400',
-  'V insolvenci': 'text-red-600 dark:text-red-400', 'V_INSOLVENCI': 'text-red-600 dark:text-red-400',
-  'Pozastavena': 'text-gray-500 dark:text-gray-400', 'POZASTAVENA': 'text-gray-500 dark:text-gray-400',
-};
+export function normalizeStatus(raw: string): string {
+  return raw
+    .trim()
+    .toUpperCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036F]/g, '')
+    .replace(/\s+/g, '_');
+}
 
-const STATUS_STRIP: Record<string, string> = {
-  'Aktivní': 'bg-emerald-500', 'AKTIVNI': 'bg-emerald-500',
-  'V likvidaci': 'bg-amber-500', 'V_LIKVIDACI': 'bg-amber-500',
-  'Zaniklý': 'bg-red-500', 'ZANIKLY': 'bg-red-500',
-  'V insolvenci': 'bg-red-500', 'V_INSOLVENCI': 'bg-red-500',
-  'Pozastavena': 'bg-gray-400', 'POZASTAVENA': 'bg-gray-400',
-};
-
-export function CompanyDetail({ result, nameQuery, onSave, isSaved, onRefresh }: CompanyDetailProps) {
+export function CompanyDetail({
+  result,
+  nameQuery,
+  onSave,
+  isSaved,
+  onRefresh,
+}: CompanyDetailProps) {
   const { company, aresSource, geo, geoSource } = result;
   const nameMatch = nameQuery ? matchNames(nameQuery, company.obchodniJmeno) : null;
-  const dotColor = STATUS_DOT[company.stavSubjektu] ?? 'bg-gray-400';
-  const textColor = STATUS_TEXT[company.stavSubjektu] ?? 'text-[var(--muted)]';
-  const stripColor = STATUS_STRIP[company.stavSubjektu] ?? 'bg-[var(--border)]';
+  const status = STATUS_CONFIG[normalizeStatus(company.stavSubjektu)];
+  const dotColor = status?.dot ?? 'bg-gray-400';
+  const textColor = status?.text ?? 'text-[var(--muted)]';
+  const stripColor = status?.strip ?? 'bg-[var(--border)]';
 
   const fields = [
     { label: 'Právní forma', value: company.pravniForma || '—' },
@@ -58,18 +75,18 @@ export function CompanyDetail({ result, nameQuery, onSave, isSaved, onRefresh }:
   ];
 
   return (
-    <div className="rounded-xl border border-[var(--border)] overflow-hidden">
+    <div className="overflow-hidden rounded-xl border border-[var(--border)]">
       {/* Status strip */}
       <div className={`h-0.5 w-full ${stripColor}`} />
 
       {/* Header */}
       <div className="px-5 pt-5 pb-4">
         <div className="flex items-start justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            <h2 className="text-lg font-semibold tracking-tight leading-snug">
+          <div className="min-w-0 flex-1">
+            <h2 className="text-lg leading-snug font-semibold tracking-tight">
               {company.obchodniJmeno}
             </h2>
-            <p className="flex items-center gap-2 mt-1 text-xs font-mono text-[var(--muted)]">
+            <p className="mt-1 flex items-center gap-2 font-mono text-xs text-[var(--muted)]">
               <span>IČO {company.ico}</span>
               {company.dic && (
                 <>
@@ -79,8 +96,10 @@ export function CompanyDetail({ result, nameQuery, onSave, isSaved, onRefresh }:
               )}
             </p>
           </div>
-          <div className={`inline-flex items-center gap-1.5 text-xs font-medium shrink-0 ${textColor}`}>
-            <span className={`h-2 w-2 rounded-full shrink-0 ${dotColor}`} />
+          <div
+            className={`inline-flex shrink-0 items-center gap-1.5 text-xs font-medium ${textColor}`}
+          >
+            <span className={`h-2 w-2 shrink-0 rounded-full ${dotColor}`} />
             {company.stavSubjektu}
           </div>
         </div>
@@ -91,9 +110,9 @@ export function CompanyDetail({ result, nameQuery, onSave, isSaved, onRefresh }:
         {fields.map(({ label, value }) => (
           <div
             key={label}
-            className="flex gap-4 px-5 py-3 border-b border-[var(--border)] last:border-b-0"
+            className="flex gap-4 border-b border-[var(--border)] px-5 py-3 last:border-b-0"
           >
-            <span className="text-xs text-[var(--muted)] w-28 shrink-0 pt-px">{label}</span>
+            <span className="w-28 shrink-0 pt-px text-xs text-[var(--muted)]">{label}</span>
             <span className="text-sm">{value}</span>
           </div>
         ))}
@@ -101,13 +120,13 @@ export function CompanyDetail({ result, nameQuery, onSave, isSaved, onRefresh }:
 
       {/* Name match */}
       {nameMatch && nameQuery && (
-        <div className="px-5 py-3 border-t border-[var(--border)]">
+        <div className="border-t border-[var(--border)] px-5 py-3">
           <NameMatchBadge result={nameMatch} input={nameQuery} aresName={company.obchodniJmeno} />
         </div>
       )}
 
       {/* Footer */}
-      <div className="px-5 py-3 bg-[var(--surface)] border-t border-[var(--border)] flex items-center justify-between flex-wrap gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border)] bg-[var(--surface)] px-5 py-3">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
           <SourceBadge label="ARES" source={aresSource} />
           {geoSource && <SourceBadge label="Geo" source={geoSource} />}
@@ -116,7 +135,7 @@ export function CompanyDetail({ result, nameQuery, onSave, isSaved, onRefresh }:
               href={`https://www.openstreetmap.org/?mlat=${geo.lat}&mlon=${geo.lng}&zoom=16`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs font-mono text-[var(--muted)] hover:text-[var(--accent)] transition-colors"
+              className="font-mono text-xs text-[var(--muted)] transition-colors hover:text-[var(--accent)]"
             >
               {geo.lat.toFixed(4)}°N {geo.lng.toFixed(4)}°E ↗
             </a>
@@ -127,7 +146,7 @@ export function CompanyDetail({ result, nameQuery, onSave, isSaved, onRefresh }:
           {aresSource === 'cache' && onRefresh && (
             <button
               onClick={onRefresh}
-              className="cursor-pointer text-xs text-[var(--muted)] hover:text-[var(--accent)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] rounded"
+              className="cursor-pointer rounded text-xs text-[var(--muted)] transition-colors hover:text-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:outline-none"
             >
               ↻ Obnovit
             </button>
@@ -135,7 +154,7 @@ export function CompanyDetail({ result, nameQuery, onSave, isSaved, onRefresh }:
           <button
             onClick={onSave}
             disabled={isSaved}
-            className={`text-xs px-3 py-1.5 rounded-md border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] ${
+            className={`rounded-md border px-3 py-1.5 text-xs transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:outline-none ${
               isSaved
                 ? 'cursor-default border-[var(--border)] text-[var(--muted)]'
                 : 'cursor-pointer border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white'

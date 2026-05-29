@@ -1,4 +1,5 @@
 # FirmaCheck — Design Spec
+
 **Date:** 2026-05-29  
 **Status:** Approved
 
@@ -14,19 +15,21 @@ FirmaCheck is a Czech company verification web app. Users enter an IČO (and opt
 
 ### Stack
 
-| Layer | Technology | Reason |
-|---|---|---|
-| Framework | Next.js 15 App Router | Vercel-native, API routes avoid CORS |
-| Styling | Tailwind CSS + shadcn/ui | Linear-style minimal UI; well-maintained component primitives |
-| Map | Leaflet.js + OpenStreetMap tiles | No API key, no rate limits for this scale |
-| Geocoding | Nominatim (OSM) via `/api/geocode` | Free, no key, sufficient accuracy for CZ addresses |
-| SQLite | sql.js (WASM) + idb (IndexedDB) | Per-user persistence in-browser; no backend DB needed; works on Vercel serverless |
-| Deployment | Vercel | Per task requirements |
+| Layer      | Technology                         | Reason                                                                            |
+| ---------- | ---------------------------------- | --------------------------------------------------------------------------------- |
+| Framework  | Next.js 15 App Router              | Vercel-native, API routes avoid CORS                                              |
+| Styling    | Tailwind CSS + shadcn/ui           | Linear-style minimal UI; well-maintained component primitives                     |
+| Map        | Leaflet.js + OpenStreetMap tiles   | No API key, no rate limits for this scale                                         |
+| Geocoding  | Nominatim (OSM) via `/api/geocode` | Free, no key, sufficient accuracy for CZ addresses                                |
+| SQLite     | sql.js (WASM) + idb (IndexedDB)    | Per-user persistence in-browser; no backend DB needed; works on Vercel serverless |
+| Deployment | Vercel                             | Per task requirements                                                             |
 
 ### Why browser-side SQLite (not Turso)?
+
 sql.js runs SQLite compiled to WASM in the browser. State is persisted to IndexedDB after every mutation. This means zero additional services, zero API keys, instant cold start, and the entire app deploys as a pure Next.js project. Trade-off: cache is per-user (each user has their own DB). The spec explicitly accepts this.
 
 ### Why Nominatim instead of Mapy.cz?
+
 Nominatim is fully free with no API key registration. Mapy.cz requires account + API key. For a demo/portfolio app, removing friction is the right call. Documented in README.
 
 ---
@@ -122,16 +125,16 @@ Cache logic runs entirely client-side: check SQLite first, call API route on mis
 
 ## Components
 
-| Component | Responsibility |
-|---|---|
-| `SearchForm` | IČO input (validates 8 digits) + optional name input + submit |
-| `CompanyDetail` | Renders ARES data, name-match badge, source badge (API/cache) |
-| `NameMatchBadge` | Compares user input vs ARES name: exact / partial / no match |
-| `CompanyMap` | Leaflet map, marker, coordinates display, OSM link |
-| `SavedCompanies` | List of saved companies, click-to-load, delete, CSV/JSON export |
-| `SQLiteProvider` | React context; initialises sql.js, persists to IndexedDB on change |
-| `SourceBadge` | Small `API` or `SQLite cache` badge shown on detail card |
-| `HeroIllustration` | AI-generated SVG shown in empty state only |
+| Component          | Responsibility                                                     |
+| ------------------ | ------------------------------------------------------------------ |
+| `SearchForm`       | IČO input (validates 8 digits) + optional name input + submit      |
+| `CompanyDetail`    | Renders ARES data, name-match badge, source badge (API/cache)      |
+| `NameMatchBadge`   | Compares user input vs ARES name: exact / partial / no match       |
+| `CompanyMap`       | Leaflet map, marker, coordinates display, OSM link                 |
+| `SavedCompanies`   | List of saved companies, click-to-load, delete, CSV/JSON export    |
+| `SQLiteProvider`   | React context; initialises sql.js, persists to IndexedDB on change |
+| `SourceBadge`      | Small `API` or `SQLite cache` badge shown on detail card           |
+| `HeroIllustration` | AI-generated SVG shown in empty state only                         |
 
 ---
 
@@ -167,12 +170,12 @@ User submits IČO
 
 ## Error States
 
-| Situation | UI |
-|---|---|
-| IČO not found (ARES 404) | "Firma s tímto IČO nebyla nalezena." |
-| ARES API error | "Nepodařilo se načíst data z ARES. Zkuste to znovu." |
-| Geocoding failed | Map hidden, show address text only |
-| Empty saved list | Friendly empty state with illustration |
+| Situation                | UI                                                   |
+| ------------------------ | ---------------------------------------------------- |
+| IČO not found (ARES 404) | "Firma s tímto IČO nebyla nalezena."                 |
+| ARES API error           | "Nepodařilo se načíst data z ARES. Zkuste to znovu." |
+| Geocoding failed         | Map hidden, show address text only                   |
+| Empty saved list         | Friendly empty state with illustration               |
 
 ---
 

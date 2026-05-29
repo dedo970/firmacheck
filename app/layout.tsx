@@ -12,7 +12,15 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="cs">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-[var(--accent)] focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-white focus:outline-none"
+        >
+          Přeskočit na obsah
+        </a>
+        {children}
+      </body>
     </html>
   );
 }
