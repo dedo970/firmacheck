@@ -1,49 +1,85 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
   <defs>
-    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#E5E5E5" stroke-width="0.5"/>
+    <pattern id="dots" width="16" height="16" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="0.75" fill="#E2E2EA"/>
     </pattern>
-    <linearGradient id="docGrad" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#5B5BD6" stop-opacity="0.08"/>
-      <stop offset="100%" stop-color="#5B5BD6" stop-opacity="0.02"/>
-    </linearGradient>
-    <linearGradient id="sealGrad" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="seal" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#5B5BD6"/>
-      <stop offset="100%" stop-color="#7C7CE8"/>
+      <stop offset="100%" stop-color="#7878E8"/>
     </linearGradient>
   </defs>
 
-  <rect width="400" height="300" fill="url(#grid)"/>
-  <rect x="123" y="57" width="154" height="196" rx="8" fill="#0f0f0f" opacity="0.06"/>
-  <rect x="120" y="54" width="154" height="196" rx="8" fill="white" stroke="#E5E5E5" stroke-width="1.5"/>
-  <rect x="120" y="54" width="154" height="196" rx="8" fill="url(#docGrad)"/>
 
-  <rect x="140" y="82" width="80" height="6" rx="3" fill="#E5E5E5"/>
-  <rect x="140" y="96" width="114" height="4" rx="2" fill="#F0F0F0"/>
-  <rect x="140" y="108" width="100" height="4" rx="2" fill="#F0F0F0"/>
-  <rect x="140" y="120" width="110" height="4" rx="2" fill="#F0F0F0"/>
 
-  <line x1="140" y1="136" x2="254" y2="136" stroke="#E5E5E5" stroke-width="1"/>
+  <!-- Card shadow -->
+  <rect x="116" y="46" width="162" height="208" rx="12" fill="#5B5BD6" opacity="0.06"/>
 
-  <rect x="140" y="148" width="50" height="4" rx="2" fill="#E5E5E5"/>
-  <rect x="196" y="148" width="70" height="4" rx="2" fill="#F0F0F0"/>
-  <rect x="140" y="160" width="40" height="4" rx="2" fill="#E5E5E5"/>
-  <rect x="196" y="160" width="60" height="4" rx="2" fill="#F0F0F0"/>
-  <rect x="140" y="172" width="55" height="4" rx="2" fill="#E5E5E5"/>
-  <rect x="196" y="172" width="80" height="4" rx="2" fill="#F0F0F0"/>
-  <rect x="140" y="184" width="45" height="4" rx="2" fill="#E5E5E5"/>
-  <rect x="196" y="184" width="65" height="4" rx="2" fill="#F0F0F0"/>
+  <!-- Card -->
+  <rect x="112" y="42" width="162" height="208" rx="12" fill="white" stroke="#E5E5EE" stroke-width="1"/>
 
-  <circle cx="230" cy="210" r="30" fill="url(#sealGrad)" opacity="0.15"/>
-  <circle cx="230" cy="210" r="25" fill="none" stroke="#5B5BD6" stroke-width="1.5" stroke-dasharray="4 2"/>
-  <circle cx="230" cy="210" r="15" fill="#5B5BD6"/>
-  <path d="M222 210 L228 216 L238 204" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Card header tint -->
+  <rect x="112" y="42" width="162" height="44" rx="12" fill="#5B5BD6" opacity="0.05"/>
+  <rect x="112" y="66" width="162" height="20" fill="#5B5BD6" opacity="0.05"/>
 
-  <rect x="254" y="54" width="72" height="22" rx="11" fill="#5B5BD6"/>
-  <text x="290" y="69" font-family="system-ui, sans-serif" font-size="9" font-weight="600" fill="white" text-anchor="middle">ARES &#x2713;</text>
+  <!-- Building icon -->
+  <g transform="translate(128,57)">
+    <rect width="16" height="15" rx="2" stroke="#5B5BD6" stroke-width="1.2" opacity="0.7"/>
+    <rect x="3" y="3" width="3.5" height="3.5" rx="0.5" fill="#5B5BD6" opacity="0.5"/>
+    <rect x="9.5" y="3" width="3.5" height="3.5" rx="0.5" fill="#5B5BD6" opacity="0.5"/>
+    <rect x="3" y="8.5" width="3.5" height="3.5" rx="0.5" fill="#5B5BD6" opacity="0.5"/>
+    <rect x="9.5" y="8.5" width="3.5" height="3.5" rx="0.5" fill="#5B5BD6" opacity="0.5"/>
+  </g>
 
-  <circle cx="96" cy="90" r="4" fill="#5B5BD6" opacity="0.3"/>
-  <circle cx="84" cy="130" r="6" fill="#5B5BD6" opacity="0.15"/>
-  <circle cx="318" cy="170" r="5" fill="#5B5BD6" opacity="0.2"/>
-  <circle cx="306" cy="220" r="3" fill="#5B5BD6" opacity="0.25"/>
+  <!-- Header text -->
+  <text x="152" y="64" font-family="system-ui,sans-serif" font-size="9.5" font-weight="700" fill="#5B5BD6" opacity="0.8">Ověření firmy</text>
+  <text x="152" y="74" font-family="system-ui,sans-serif" font-size="7.5" fill="#5B5BD6" opacity="0.45">Rejstřík ARES</text>
+
+  <!-- Header divider -->
+  <line x1="112" y1="86" x2="274" y2="86" stroke="#E5E5EE" stroke-width="1"/>
+
+  <!-- Data row 1: IČO -->
+  <text x="128" y="101" font-family="system-ui,sans-serif" font-size="8" fill="#9999B4" font-weight="500">IČO</text>
+  <rect x="190" y="97" width="66" height="4" rx="2" fill="#EBEBF4"/>
+
+  <!-- Data row 2: Název -->
+  <text x="128" y="117" font-family="system-ui,sans-serif" font-size="8" fill="#9999B4" font-weight="500">Název</text>
+  <rect x="190" y="113" width="66" height="4" rx="2" fill="#EBEBF4"/>
+  <rect x="190" y="120" width="46" height="3" rx="1.5" fill="#F2F2F8"/>
+
+  <!-- Data row 3: Stav (green status dot) -->
+  <text x="128" y="138" font-family="system-ui,sans-serif" font-size="8" fill="#9999B4" font-weight="500">Stav</text>
+  <circle cx="196" cy="136" r="4" fill="#22C55E" opacity="0.8"/>
+  <text x="206" y="139" font-family="system-ui,sans-serif" font-size="8" fill="#22C55E" font-weight="600" opacity="0.9">Aktivní</text>
+
+  <!-- Data row 4: Adresa -->
+  <text x="128" y="155" font-family="system-ui,sans-serif" font-size="8" fill="#9999B4" font-weight="500">Adresa</text>
+  <rect x="190" y="151" width="66" height="4" rx="2" fill="#EBEBF4"/>
+  <rect x="190" y="158" width="50" height="3" rx="1.5" fill="#F2F2F8"/>
+
+  <!-- Data row 5: DIČ -->
+  <text x="128" y="177" font-family="system-ui,sans-serif" font-size="8" fill="#9999B4" font-weight="500">DIČ</text>
+  <rect x="190" y="173" width="58" height="4" rx="2" fill="#EBEBF4"/>
+
+  <!-- Inner divider -->
+  <line x1="128" y1="187" x2="260" y2="187" stroke="#EBEBF4" stroke-width="0.75"/>
+
+  <!-- Source indicator pill -->
+  <rect x="128" y="196" width="88" height="20" rx="10" fill="#5B5BD6" opacity="0.07"/>
+  <circle cx="141" cy="206" r="3.5" fill="#5B5BD6" opacity="0.4"/>
+  <text x="150" y="210" font-family="system-ui,sans-serif" font-size="7.5" fill="#5B5BD6" opacity="0.6" font-weight="500">ARES dáta: API</text>
+
+  <!-- Verification seal (overlapping card bottom-right) -->
+  <circle cx="264" cy="234" r="26" fill="white" stroke="#E5E5EE" stroke-width="1"/>
+  <circle cx="264" cy="234" r="21" fill="url(#seal)"/>
+  <circle cx="264" cy="234" r="16" fill="none" stroke="white" stroke-width="1" stroke-dasharray="2.5 2" opacity="0.55"/>
+  <path d="M255 234 L261 240.5 L273 227" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- ARES badge (floating, overlapping card top-right) -->
+  <rect x="228" y="22" width="68" height="24" rx="12" fill="#5B5BD6"/>
+  <text x="262" y="38" font-family="system-ui,sans-serif" font-size="9.5" font-weight="700" fill="white" text-anchor="middle">ARES ✓</text>
+
+  <!-- Decorative dots -->
+  <circle cx="96" cy="76" r="3" fill="#5B5BD6" opacity="0.18"/>
+  <circle cx="86" cy="210" r="3.5" fill="#5B5BD6" opacity="0.12"/>
+  <circle cx="314" cy="72" r="3" fill="#5B5BD6" opacity="0.15"/>
 </svg>
