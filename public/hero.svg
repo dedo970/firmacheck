@@ -11,6 +11,24 @@
 
 
 
+  <!-- Search bar (empty state prompt) -->
+  <rect x="40" y="120" width="118" height="32" rx="8" fill="white" stroke="#E5E5EE" stroke-width="1.2"/>
+  <!-- Magnifying glass icon -->
+  <circle cx="59" cy="136" r="6" stroke="#9999B4" stroke-width="1.5"/>
+  <line x1="63.5" y1="140.5" x2="67" y2="144" stroke="#9999B4" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- IČO placeholder text -->
+  <text x="76" y="133" font-family="system-ui,sans-serif" font-size="7.5" fill="#BBBBCC" font-weight="400">Zadejte IČO…</text>
+  <!-- Cursor blink -->
+  <rect x="76" y="138" width="1.2" height="7" rx="0.5" fill="#5B5BD6" opacity="0.5"/>
+
+  <!-- Arrow from search bar to card -->
+  <path d="M158 136 Q180 136 190 136" stroke="#C4C4D8" stroke-width="1" stroke-dasharray="2.5 2" marker-end="url(#arrow)"/>
+  <defs>
+    <marker id="arrow" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
+      <path d="M0,0.5 L4,2.5 L0,4.5" stroke="#C4C4D8" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
   <!-- Card shadow -->
   <rect x="116" y="46" width="162" height="208" rx="12" fill="#5B5BD6" opacity="0.06"/>
 
