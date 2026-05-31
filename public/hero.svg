@@ -1,29 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
   <defs>
-    <pattern id="dots" width="16" height="16" patternUnits="userSpaceOnUse">
-      <circle cx="1" cy="1" r="0.75" fill="#E2E2EA"/>
-    </pattern>
     <linearGradient id="seal" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#5B5BD6"/>
       <stop offset="100%" stop-color="#7878E8"/>
     </linearGradient>
-  </defs>
-
-
-
-  <!-- Search bar (empty state prompt) -->
-  <rect x="40" y="120" width="118" height="32" rx="8" fill="white" stroke="#E5E5EE" stroke-width="1.2"/>
-  <!-- Magnifying glass icon -->
-  <circle cx="59" cy="136" r="6" stroke="#9999B4" stroke-width="1.5"/>
-  <line x1="63.5" y1="140.5" x2="67" y2="144" stroke="#9999B4" stroke-width="1.5" stroke-linecap="round"/>
-  <!-- IČO placeholder text -->
-  <text x="76" y="133" font-family="system-ui,sans-serif" font-size="7.5" fill="#BBBBCC" font-weight="400">Zadejte IČO…</text>
-  <!-- Cursor blink -->
-  <rect x="76" y="138" width="1.2" height="7" rx="0.5" fill="#5B5BD6" opacity="0.5"/>
-
-  <!-- Arrow from search bar to card -->
-  <path d="M158 136 Q180 136 190 136" stroke="#C4C4D8" stroke-width="1" stroke-dasharray="2.5 2" marker-end="url(#arrow)"/>
-  <defs>
     <marker id="arrow" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
       <path d="M0,0.5 L4,2.5 L0,4.5" stroke="#C4C4D8" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
     </marker>
@@ -100,4 +80,12 @@
   <circle cx="96" cy="76" r="3" fill="#5B5BD6" opacity="0.18"/>
   <circle cx="86" cy="210" r="3.5" fill="#5B5BD6" opacity="0.12"/>
   <circle cx="314" cy="72" r="3" fill="#5B5BD6" opacity="0.15"/>
+
+  <!-- Search bar (empty state prompt) — drawn last so it appears above card -->
+  <rect x="10" y="116" width="105" height="38" rx="10" fill="white" stroke="#E5E5EE" stroke-width="1.2"/>
+  <!-- Magnifying glass icon -->
+  <circle cx="30" cy="135" r="7" stroke="#9999B4" stroke-width="1.5"/>
+  <line x1="35.5" y1="140.5" x2="39" y2="144" stroke="#9999B4" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- IČO placeholder text -->
+  <text x="40" y="140" font-family="system-ui,sans-serif" font-size="11" fill="#BBBBCC" font-weight="400">Zadejte IČO…</text>
 </svg>
