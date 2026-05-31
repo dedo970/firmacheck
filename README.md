@@ -174,7 +174,7 @@ CSV je správne escapované (polia s čiarkami sú uzavreté do úvodzoviek), k�
 
 ### Prompt
 
-> _"Generate an SVG illustration (400×300) for a Czech company verification app. Show an abstract document with placeholder data lines, a verification seal with a checkmark, and an 'ARES ✓' badge. Use a minimal Linear-inspired style with indigo accent (#5B5BD6), light gray tones, subtle grid background. No decorative text except the badge."_
+> _"Generate a minimal SVG illustration (400×300) for a Czech company registry verification app. Centered white document card with a subtle indigo shadow, transparent background. Card header with a 2×2 building grid icon and text 'Ověření firmy / Rejstřík ARES' in #5B5BD6. Five labeled data rows: IČO, Název, Stav, Adresa, DIČ — labels in muted gray, values as light bars, Stav row with a green dot (#22C55E) and text 'Aktivní'. Below the rows: a pill reading 'ARES dáta: API'. Overlapping the card's bottom-right: a circular verification seal with indigo-to-purple gradient and white checkmark. Floating top-right: solid indigo pill badge reading 'ARES ✓' in white bold. Linear-inspired style, #5B5BD6 accent."_
 
 ### Prečo je v aplikácii?
 
@@ -210,7 +210,7 @@ Aplikáciu som vyvíjal metódou iteratívneho promptovania: špecifikoval som c
 
 **Prompt 3 — SVG hero ilustrácia:**
 
-> _"Generate an SVG illustration (400×300) for a Czech company verification app. Show an abstract document with placeholder data lines, a verification seal with a checkmark, and an 'ARES ✓' badge. Use a minimal Linear-inspired style with indigo accent (#5B5BD6), light gray tones, subtle grid background. No decorative text except the badge."_
+> _"Generate a minimal SVG illustration (400×300) for a Czech company registry verification app. Centered white document card with a subtle indigo shadow, transparent background. Card header with a 2×2 building grid icon and text 'Ověření firmy / Rejstřík ARES' in #5B5BD6. Five labeled data rows: IČO, Název, Stav, Adresa, DIČ — labels in muted gray, values as light bars, Stav row with a green dot (#22C55E) and text 'Aktivní'. Below the rows: a pill reading 'ARES dáta: API'. Overlapping the card's bottom-right: a circular verification seal with indigo-to-purple gradient and white checkmark. Floating top-right: solid indigo pill badge reading 'ARES ✓' in white bold. Linear-inspired style, #5B5BD6 accent."_
 
 ---
 
